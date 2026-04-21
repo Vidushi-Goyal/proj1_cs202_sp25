@@ -1,6 +1,7 @@
 #complete your tasks in this file
 #task 1
 from dataclasses import dataclass
+import math
 @dataclass(frozen=True)
 class GlobeRect:
     lo_lat: float
@@ -49,5 +50,51 @@ def emissions_per_capita(rc: RegionCondition) -> float:
     emissions_per_person = rc.ghg_rate/rc.pop
     return emissions_per_person
 
+#remember when using sin/cos/tan -> use rad
 def area(gr: GlobeRect) -> float:
+    earth_rad = 6378.1
+    lo_lat_rad = math.radians(gr.lo_lat)
+    hi_lat_rad = math.radians(gr.hi_lat)
+    west_long_rad = math.radians(gr.west_long)
+    east_long_rad = math.radians(gr.east_long)
+    dist_west_east = east_long_rad - west_long_rad
+    if dist_west_east < 0:
+        dist_west_east += 2 * math.pi
+    area_ft = (earth_rad**2) * abs(dist_west_east) * abs((math.sin(lo_lat_rad) - math.sin(hi_lat_rad)))
+    return area_ft
+
+def emissions_per_square_km(rc: RegionCondition) -> float:
+    area_emission = area(rc.region.rect)
+    if area_emission == 0:
+        return 0.0
+    emissions_per_square = rc.ghg_rate/area_emission
+    return emissions_per_square
+
+def densest(rc_list: list[RegionCondition]) -> float:
+    main_rc = densest_helper(rc_list[1:], rc_list[0])
+    return main_rc.region.name
+def densest_helper(rc_list: list[RegionCondition], best_so_far: RegionCondition) -> RegionCondition:
+    if not rc_list:
+        return best_so_far
+    current = rc_list[0]
+    current_area = area(current.region.rect)
+    if current_area > 0:
+        current_density = current.pop / current_area
+    else:
+        return 0.0
+    best_area = area(best_so_far.region.rect)
+    if best_area > 0:
+        best_density = best_so_far.pop / best_area
+    else:
+        return 0.0
+    if current_density > best_density:
+        new_best = current
+    else:
+        new_best = best_so_far
+
+    return densest_helper(rc_list[1:], new_best)
+
+
+
+
 #task 4: 8:00-10:00: finish assignment submit
