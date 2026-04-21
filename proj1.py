@@ -102,7 +102,7 @@ def densest_helper(rc_list: list[RegionCondition], best_so_far: RegionCondition)
 
 
 #task 4:
-def project_conditon(rc: RegionCondition,years: int) -> RegionCondition:
+def project_condition(rc: RegionCondition,years: int) -> RegionCondition:
     #Returns a new RegionCondition with the projected state of the region's population based on the terrain.
     if rc.region.terrain == "ocean":
         rate = .0001

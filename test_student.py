@@ -45,7 +45,7 @@ class TestRegionFunctions(unittest.TestCase):
         rc = RegionCondition(
         Region(GlobeRect(-10.0, -8.0, -150.0, -148.0),"Abyssopelagic Zone", "ocean"), 2025, 0,0.0
     )
-        test_projected = project_conditon(rc,10)
+        test_projected = project_condition(rc,10)
         self.assertEqual(test_projected.year, 2035)
         self.assertEqual(test_projected.pop, 0.0)
         self.assertEqual(test_projected.ghg_rate, 0.0)
