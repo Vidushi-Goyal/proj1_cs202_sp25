@@ -45,6 +45,7 @@ region_conditions = [
 #task 3:
 
 def emissions_per_capita(rc: RegionCondition) -> float:
+    #Purpose Statement: Return the CO2 emission per person via taking each region's ghg_rate divided by the region's population.
     if rc.pop == 0:
         return 0.0
     emissions_per_person = rc.ghg_rate/rc.pop
@@ -52,6 +53,7 @@ def emissions_per_capita(rc: RegionCondition) -> float:
 
 #remember when using sin/cos/tan -> use rad
 def area(gr: GlobeRect) -> float:
+    #Purpose statement: Caluclate the area of based on the Globe Rect latitude and longitude in radians (in sqaure kilometes).
     earth_rad = 6378.1
     lo_lat_rad = math.radians(gr.lo_lat)
     hi_lat_rad = math.radians(gr.hi_lat)
@@ -64,6 +66,7 @@ def area(gr: GlobeRect) -> float:
     return area_ft
 
 def emissions_per_square_km(rc: RegionCondition) -> float:
+    #Using the area function return the tons of Co2 equivalent per sqare kiolmeter by dividing the recions ghg rate by the area emission.
     area_emission = area(rc.region.rect)
     if area_emission == 0:
         return 0.0
@@ -71,6 +74,7 @@ def emissions_per_square_km(rc: RegionCondition) -> float:
     return emissions_per_square
 
 def densest(rc_list: list[RegionCondition]) -> float:
+    #finding the highest populated by density region, it will return the name of the region only. (using recursion)
     main_rc = densest_helper(rc_list[1:], rc_list[0])
     return main_rc.region.name
 def densest_helper(rc_list: list[RegionCondition], best_so_far: RegionCondition) -> RegionCondition:
@@ -97,4 +101,21 @@ def densest_helper(rc_list: list[RegionCondition], best_so_far: RegionCondition)
 
 
 
-#task 4: 8:00-10:00: finish assignment submit
+#task 4:
+def project_conditon(rc: RegionCondition,years: int) -> RegionCondition:
+    #Returns a new RegionCondition with the projected state of the region's population based on the terrain.
+    if rc.region.terrain == "ocean":
+        rate = .0001
+    elif rc.region.terrain == "mountain":
+        rate = .0005
+    elif rc.region.terrain == "forest":
+        rate = -.00001
+    else:
+        rate = .00003
+
+    compounding = ( 1 + rate )** years
+
+    current_year = rc.year + years
+    current_pop = int(rc.pop * compounding)
+    current_ghg = rc.ghg_rate * compounding
+    return RegionCondition(rc.region, current_year, current_pop, current_ghg)

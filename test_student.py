@@ -30,15 +30,26 @@ class TestRegionFunctions(unittest.TestCase):
     )
         expected = 0.0
         self.assertAlmostEqual(emissions_per_square_km(rc), expected)
-    def test_emission_per_square_km_edge1(self):
+    def test_emission_per_square_km_norm(self):
         rc = RegionCondition(
             Region(GlobeRect(19.3,19.5,-99.2,-99.0),"Morro Bay","other"), 2025,10550,100
     )
         expected = 100.0 / 467.5320
         self.assertAlmostEqual(emissions_per_square_km(rc), expected, places=4)
 
+    def test_densest(self):
+        rc_list = region_conditions
+        self.assertEqual(densest(rc_list), "Mexico City")
 
-    def test_densesnt(self):
+    def test_project_condition(self):
+        rc = RegionCondition(
+        Region(GlobeRect(-10.0, -8.0, -150.0, -148.0),"Abyssopelagic Zone", "ocean"), 2025, 0,0.0
+    )
+        test_projected = project_conditon(rc,10)
+        self.assertEqual(test_projected.year, 2035)
+        self.assertEqual(test_projected.pop, 0.0)
+        self.assertEqual(test_projected.ghg_rate, 0.0)
+
 
 if __name__ == '__main__':
     unittest.main()
